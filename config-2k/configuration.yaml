@@ -1,0 +1,63 @@
+screenWidth: 2560
+screenHeight: 1440
+
+# Values = 0 to screenWidth
+# the smaller size the quicker the screen scan happen, the formula is as following:
+# screenWidth/2 - fisBaitWidth/2 and with the given size taken, the captured should be in the middle of the screen where we presume the fish bait is
+fishCaughtWidth: 100
+
+# The calculation is simlar to the width
+fishCaughtHeight: 200
+
+# Values: True|False
+# This value should stay as false to ensure quicker and smoother operation
+# Enable this to get screenshot of region defined by fishCaughtWidth and fishCaughtHeight above.
+# Use this to identify if you have set up the region correctly
+captureFishCaught: False
+
+# Values: True|False
+# Set to true to make the processing go faster, false for higher accuracy because colors will be taken in consideration
+fishCaughtGrayScale: True
+
+# path to the template file
+fishCaughtTemplateName: config/caught_template.png
+
+# Values: 0.0 ~ 1.0
+# Coefficient used to match with the bait indicator on the screen
+# If this is set too low, the program may react to something else that happen on the screen
+# if we limit the identification region (set by fishCaughtWidth & fishCaughtHeight) it shouldn't be a problem
+# If this value is set too high, the program may not recognize the template as the similarities for higher coefficient is lower
+fishCaughtCoefficient: 0.7
+
+
+# Values = (0 to screenWidth) - repairIndicatorWidth
+# Starting points of the repair indicator - X represents horizontal axis (width) and Y represents vertical axis (height)
+repairIndicatorStartX: 2040
+
+# Values = (0 to height) - repairIndicatorHeight
+repairIndicatorStartY: 0
+
+# Values: True|False
+# Set to true to make the processing go faster, false for higher accuracy because colors will be taken in consideration
+repairIndicatorGrayScale: True
+
+# Defined to get smaller chunk of screen to look for the indicator
+repairIndicatorWidth: 100
+repairIndicatorHeight: 150
+
+# Values: True|False
+# This value should stay as false to ensure quicker and smoother operation
+# Enable this to get screenshot of region defined by repairIndicatorStartX, repairIndicatorStartY, repairIndicatorWidth and repairIndicatorHeight above.
+# Use this to identify if you have set up the region correctly and turn it off afterward
+captureRepairIndicator: True
+
+repairIndicatorTemplateName: config/repair_template.png
+repairIndicatorCoefficient: 0.4
+
+# Vertical position of the mouse to point to after repair so the fishing can continue
+# i.e. Punika near the dock
+fishPondLocationX: 2550
+# Horizontal position of the mouse to point to after repair so the finshing can continue
+fishPondLocationY: 720
+
+fishingKey: e
