@@ -6,8 +6,6 @@ import pyautogui
 with open("config/configuration.yaml", "r") as yamlfile:
     configuration = yaml.safe_load(yamlfile)
 
-cast = True
-
 screenWidth = configuration['screenWidth']
 screenHeight = configuration['screenHeight']
 
@@ -35,9 +33,11 @@ fishCaughtStartX = int(screenWidth/2 - fishCaughtWidth/2)
 fishCaughtStartY = int(screenHeight/2 - fishCaughtHeight/2 - 50)
 
 fishCaught = 0
+miniGameAttemps = 0
 reCastCount = 0
 
 fishingKey = configuration['fishingKey']
+castNetKey = configuration['castNetKey']
 
 def tryRepair():
     if (captureRepairIndicator):    
@@ -75,40 +75,62 @@ def tryClickButton(btnTemplate, confidenceCoeff, shouldGrayScale) -> bool:
         time.sleep(random.uniform(0.5, 1.0))
     return btnFound is not None
 
+def tryPlayMiniGame() -> bool:
+    foundScreenshot = pyautogui.screenshot(region=(int(screenWidth/2 - 100), int(screenHeight/2), 150, 200))
+    foundScreenshot.save('minigame_indicator.png')
+    foundMiniGame = pyautogui.locateOnScreen('config/minigame_start.png', confidence=0.5, grayscale=True, region=(int(screenWidth/2 - 100), int(screenHeight/2 - 50), 200, 200))
+    if foundMiniGame != None:
+        print('Mini game found')
+        time.sleep(2)
+        print('Casting net')
+        pyautogui.press(castNetKey)
+        time.sleep(3)
+        miniGameStart = time.time()
+        while(time.time() - miniGameStart < 15):
+            perfectFound = pyautogui.locateOnScreen('config/perfect_template.png', confidence=0.5, grayscale=True)
+            if(perfectFound != None):
+                pyautogui.press(' ')
+                time.sleep(0.145)
+    return foundMiniGame != None
 
+def fishing() -> bool:
+    print("Casting out lure")
+    pyautogui.press(fishingKey)
+    castTime = time.time()
+    fishFound = None
+    # countdown for recast could be stuck
+    while(time.time() - castTime < 25 and fishFound == None):
+        if (captureFishCaught):
+            imagePixels = pyautogui.screenshot(region=(fishCaughtStartX, fishCaughtStartY, fishCaughtWidth, fishCaughtHeight))
+            imagePixels.save('capture_indicator.png')
+
+        fishFound = pyautogui.locateOnScreen(fishCaughtTemplate, confidence=fishCaughtCoef, grayscale=fishCaughtGrayScale,region=(fishCaughtStartX, fishCaughtStartY, fishCaughtWidth, fishCaughtHeight))
+        if (fishFound != None):
+            print("Detected fish! Reeling in!")
+            pyautogui.press(fishingKey)
+    return fishFound != None
+
+
+# Starting the app   
+print("Started!")
 print("Fishing will be started in 5 seconds!")
 time.sleep(5)
-print("Started!")
-castTime = time.time()
 while True:
-    if (cast):
-        tryRepair()
-        print("Casting out lure")
-        pyautogui.press(fishingKey)
-        castTime = time.time()
-        cast = False
+    tryRepair()
+    if(fishing()):
+        reCastCount = 0
+        # Time between fishing before able to press key again
+        time.sleep(random.uniform(5.5, 7))
+        playedMiniGame = tryPlayMiniGame()
+        time.sleep(1)
 
-    if (captureFishCaught):
-        imagePixels = pyautogui.screenshot(region=(fishCaughtStartX, fishCaughtStartY, fishCaughtWidth, fishCaughtHeight))
-        imagePixels.save('capture_indicator.png')
-
-    fishFound = pyautogui.locateOnScreen(fishCaughtTemplate, confidence=fishCaughtCoef, grayscale=fishCaughtGrayScale,region=(fishCaughtStartX, fishCaughtStartY, fishCaughtWidth, fishCaughtHeight))
-    if (fishFound != None):
-        print("Detected catch! Reeling in lure")
-        pyautogui.press(fishingKey)
-        time.sleep(random.uniform(6, 7.5))
         fishCaught += 1
         print(f"Caught {fishCaught} fishes")
-        cast = True
-        castTime = time.time()
-        reCastCount = 0
+        if(playedMiniGame):
+            miniGameAttemps += 1
+            print(f"Mini game attempts: {miniGameAttemps}")
     else:
-        # Re-casting line, probably stuck
-        if (time.time() - castTime > 25):
-            cast = True
-            castTime = time.time()
-            reCastCount += 1
-            # probably out of energy, stop the app
-            if reCastCount == 6:
-                break
-    time.sleep(0.100)
+        reCastCount += 1
+        # probably out of energy, stop the app
+        if reCastCount == 6:
+            break
