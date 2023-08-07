@@ -27,14 +27,14 @@ fishCaughtTemplateName: config/caught_template.png
 # If this is set too low, the program may react to something else that happen on the screen
 # if we limit the identification region (set by fishCaughtWidth & fishCaughtHeight) it shouldn't be a problem
 # If this value is set too high, the program may not recognize the template as the similarities for higher coefficient is lower
-fishCaughtCoefficient: 0.7
+fishCaughtCoefficient: 0.77
 
 
 # Values = (0 to screenWidth) - repairIndicatorWidth
 # Starting points of the repair indicator - X represents horizontal axis (width) and Y represents vertical axis (height)
 repairIndicatorStartX: 2160
 
-# Values = (0 to height) - repairIndicatorHeight
+# Values = (0 to screenHeight) - repairIndicatorHeight
 repairIndicatorStartY: 0
 
 # Values: True|False
@@ -62,3 +62,41 @@ fishPondLocationY: 600
 
 fishingKey: e
 castNetKey: f
+
+# Values = (0 to screenWidth) - miniGameIndicatorWidth
+# Starting points of the minigame indicator area (somewhere around center of the screen) - X represents horizontal axis (width) and Y represents vertical axis (height)
+# Try to pinpoint smaller area so the program can find the indicater sooner
+miniGameStartIndicatorX: 1180
+
+# Values = (0 to height) - miniGameIndicatorHeight
+miniGameStartIndicatorY: 390
+miniGameIndicatorWidth: 200
+miniGameIndicatorHeight: 200
+miniGameIndicatorCoefficient: 0.5
+miniGameIndicatorGrayScale: True
+
+# Values = (0 to screenWidth) - repairIndicatorWidth
+# Starting points of the active minigame area - X represents horizontal axis (width) and Y represents vertical axis (height)
+# Try to reduce search area as much as possible as this will allow the search happen much faster and you'll have more time to set between keypress for higher accuracy mini game play
+miniGameZoneStartX: 0
+# Values = (0 to screenHeight) - repairIndicatorHeight
+miniGameZoneStartY: 0
+miniGameZoneWidth: 1280
+miniGameZoneHeight: 980
+miniGamePerfectCoefficient: 0.5
+miniGamePerfectGrayScale: True
+
+# Delay between key press for mini game.
+# Example 1: Rod with minigame difficulty reduction level 3
+# Delay is 0.14 if starting point is 0 and width is 2560, height start is 0 and height is 1080
+# Delay is 0.19 if starting point is 0 and width is 1280, height starting point is 0 and height is 980
+# You can finetune delay much better when the search zone is smaller.
+
+# Example 2: Rod with minigame difficulty reduction level 2
+# Delay is 0.043 if starting point is 0 and width is 2560, height start is 0 and height is 1080
+# Delay is 0.06 if starting point is 0 and width is 1280, height starting point is 0 and height is 980
+# with reduction level 2 is much harder and even with these settings the game can fail sometimes. So if the area is reduced even more the success chance is going to be much higher
+
+# NOTE: minimum possible delay varies between computers - for linux computers this should be around 0.02, for pc computers around 0.013 or a bit more.
+# NOTE: Minigame reduction level 1 is not possible to play with the bot.
+miniGameKeyDelay: 0.06

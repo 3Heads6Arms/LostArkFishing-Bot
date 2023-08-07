@@ -87,10 +87,14 @@ def tryPlayMiniGame() -> bool:
         time.sleep(3)
         miniGameStart = time.time()
         while(time.time() - miniGameStart < 15):
-            perfectFound = pyautogui.locateOnScreen('config/perfect_template.png', confidence=0.5, grayscale=True)
+            perfectFound = pyautogui.locateOnScreen('config/perfect_template.png', confidence=0.5, grayscale=True, region=(0, 0, int(screenWidth/2), screenHeight-100))
             if(perfectFound != None):
                 pyautogui.press(' ')
-                time.sleep(0.145)
+                # lv3 0.14
+                # lv3 0.19 reduced region
+                # lv2 0.043?
+                # lv2 0.06? reduced region
+                time.sleep(0.06)
     return foundMiniGame != None
 
 def fishing() -> bool:
